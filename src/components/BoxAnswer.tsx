@@ -5,7 +5,7 @@ export const BoxAnswer: React.FC = () => {
   const [answer, setAnswer] = useState('');
 
   return (
-    <div id="answerBox" style={{ height: '100%' }}>
+    <div id="answerBox" >
       <textarea
         id="answerTextArea"
         placeholder="Answer"

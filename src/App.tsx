@@ -14,15 +14,15 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="container">
+    <div className="app">
       {settingsOpen && <SettingsDialog onUpdate={() => setSettingsOpen(false)} />}
-      <div className="left-pane" />
-      <div className="center-pane">
+      <div className="left-panel" />
+      <div className="center-panel">
         <BoxPrompt />
         <BoxContext />
         <BoxAnswer />
       </div>
-      <div className="right-pane" />
+      <div className="right-panel" />
     </div>
   );
 };
