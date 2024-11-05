@@ -1,5 +1,3 @@
-/* src/styles/globalStyles.css */
-
 /* Reset default margin and padding */
 * {
   margin: 0;
@@ -17,6 +15,7 @@ body {
 .app {
   display: flex;
   height: 100vh;
+  width: 100vw;
 }
 
 /* Left and Right Panels */
@@ -24,10 +23,11 @@ body {
 .right-panel {
   background-color: #e0e0e0;
   height: 100%;
+  width: 25%;
 }
 
-/* Center Panel */
 .center-panel {
+  width: 50%;
   display: flex;
   flex-direction: column;
   padding: 10px;
@@ -169,11 +169,13 @@ button {
   border-radius: 5px;
   width: 300px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
+/* Settings Dialog Items */
 .modal label {
-  display: block;
-  margin-bottom: 5px;
   font-weight: bold;
 }
 
@@ -181,7 +183,6 @@ button {
 .modal input[type="password"] {
   width: 100%;
   padding: 8px;
-  margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   font-size: 14px;
@@ -189,6 +190,12 @@ button {
 
 .modal input[type="checkbox"] {
   margin-right: 5px;
+}
+
+/* Button Alignment in Modal */
+.modal .button-row {
+  display: flex;
+  justify-content: space-between;
 }
 
 .modal button {
@@ -201,7 +208,6 @@ button {
 .modal button:first-of-type {
   background-color: #ddd;
   color: #333;
-  margin-right: 10px;
 }
 
 .modal button:last-of-type {

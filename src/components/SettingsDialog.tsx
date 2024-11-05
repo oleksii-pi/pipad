@@ -15,14 +15,36 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
 
   return (
     <div className="modal">
-      <label>Model name:</label>
-      <input type="text" value={modelName} onChange={(e) => setModelName(e.target.value)} />
-      <label>OpenAI Key:</label>
-      <input type="password" placeholder="****************" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
-      <label>Dark mode</label>
-      <input type="checkbox" checked={darkMode} onChange={(e) => setDarkMode(e.target.checked)} />
-      <button onClick={handleUpdate}>Update</button>
-      <button onClick={onUpdate}>Cancel</button>
+      <div className="modal-content">
+        <label>Model name:</label>
+        <input
+          type="text"
+          value={modelName}
+          onChange={(e) => setModelName(e.target.value)}
+        />
+        
+        <label>OpenAI Key:</label>
+        <input
+          type="password"
+          placeholder="****************"
+          value={apiKey}
+          onChange={(e) => setApiKey(e.target.value)}
+        />
+
+        <label>
+          <input
+            type="checkbox"
+            checked={darkMode}
+            onChange={(e) => setDarkMode(e.target.checked)}
+          />
+          Dark mode
+        </label>
+        
+        <div className="button-row">
+          <button onClick={onUpdate}>Cancel</button>
+          <button onClick={handleUpdate}>Update</button>
+        </div>
+      </div>
     </div>
   );
 };
