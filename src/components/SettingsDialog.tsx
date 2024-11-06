@@ -30,6 +30,9 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
         />
+        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.6em' }}>
+          Get your OpenAI API key
+        </a>
 
         <label>
           <input
