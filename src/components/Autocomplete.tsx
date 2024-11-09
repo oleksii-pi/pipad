@@ -142,6 +142,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           onClick={() => {
             onChange(item);
             updateMru(item);
+            inputRef?.current?.focus();
             setShowPopup(false); // Hide popup after selection
           }}
           onMouseEnter={() => setSelectedIndex(index)}
