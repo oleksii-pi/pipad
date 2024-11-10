@@ -15,10 +15,20 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
   const abortControllerRef = useRef<AbortController | null>(null); // Ref for AbortController
 
   useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && textareaRef.current) {
+    const focusTextarea = () => {
+      if (textareaRef.current) {
         textareaRef.current.focus();
         textareaRef.current.select();
+      }
+    };
+
+    // Focus on initial mount
+    focusTextarea();
+
+    // Focus on visibility change
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        focusTextarea();
       }
     };
 
