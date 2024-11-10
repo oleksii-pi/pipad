@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface BoxContextProps {
   prompt: string;
@@ -7,6 +7,22 @@ interface BoxContextProps {
 export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && textareaRef.current) {
+        textareaRef.current.focus();
+        textareaRef.current.select();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData.items;
@@ -23,9 +39,8 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
   };
 
   function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
-    const prompts = JSON.parse(localStorage.getItem('prompts') || '[]')
-      .filter((p: string) => p !== prompt);
-    prompts.unshift(prompt); 
+    const prompts = JSON.parse(localStorage.getItem('prompts') || '[]').filter((p: string) => p !== prompt);
+    prompts.unshift(prompt);
     localStorage.setItem('prompts', JSON.stringify(prompts));
   }
 
@@ -37,6 +52,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
         value={context}
         onChange={(e) => setContext(e.target.value)}
         onPaste={handlePaste}
+        ref={textareaRef} 
       />
       {images.map((img, index) => (
         <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
