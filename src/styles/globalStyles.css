@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-size: 20px;
 }
 
 body {
@@ -63,7 +64,6 @@ textarea {
   height: 100%;
   border: none;
   resize: none;
-  font-size: 14px;
   padding: 5px;
   outline: none;
   font-family: inherit;
@@ -84,13 +84,11 @@ button {
 }
 
 #settingsButton {
-  font-size: 18px;
   color: #333;
 }
 
 /* Submit Button */
 #submitButton {
-  font-size: 14px;
   padding: 6px 12px;
   border-radius: 5px;
   background-color: #007bff;
@@ -196,7 +194,6 @@ button {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 5px;
-  font-size: 14px;
 }
 
 .modal input[type="checkbox"] {
