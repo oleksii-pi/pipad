@@ -1,3 +1,4 @@
+// src/App.tsx
 import React, { useEffect, useState } from 'react';
 import { BoxPrompt } from './components/BoxPrompt';
 import { BoxContext } from './components/BoxContext';
@@ -8,6 +9,7 @@ import './styles/globalStyles.css';
 const App: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [prompt, setPrompt] = useState('');
+  const [answer, setAnswer] = useState('');
 
   useEffect(() => {
     const modelName = localStorage.getItem('modelName');
@@ -20,8 +22,8 @@ const App: React.FC = () => {
       <div className="left-panel" />
       <div className="center-panel">
         <BoxPrompt prompt={prompt} setPrompt={setPrompt} />
-        <BoxContext prompt={prompt} />
-        <BoxAnswer />
+        <BoxContext prompt={prompt} setAnswer={setAnswer} />
+        <BoxAnswer answer={answer} />
       </div>
       <div className="right-panel" />
     </div>

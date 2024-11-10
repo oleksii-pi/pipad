@@ -1,16 +1,18 @@
 // src/components/BoxAnswer.tsx
-import React, { useState } from 'react';
+import React from 'react';
 
-export const BoxAnswer: React.FC = () => {
-  const [answer, setAnswer] = useState('');
+interface BoxAnswerProps {
+  answer: string;
+}
 
+export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer }) => {
   return (
-    <div id="answerBox" >
+    <div id="answerBox">
       <textarea
         id="answerTextArea"
         placeholder="Answer"
         value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
+        readOnly
       />
     </div>
   );

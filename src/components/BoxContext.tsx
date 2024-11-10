@@ -1,10 +1,13 @@
+// src/components/BoxContext.tsx
 import React, { useState, useRef, useEffect } from 'react';
+import { streamAnswer } from '../services/openaiApi';
 
 interface BoxContextProps {
   prompt: string;
+  setAnswer: React.Dispatch<React.SetStateAction<string>>;
 }
 
-export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
+export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -38,10 +41,48 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
     }
   };
 
-  function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+  async function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
+    event.preventDefault();
+
+    // Save prompt to localStorage
     const prompts = JSON.parse(localStorage.getItem('prompts') || '[]').filter((p: string) => p !== prompt);
     prompts.unshift(prompt);
     localStorage.setItem('prompts', JSON.stringify(prompts));
+
+    // Get settings
+    const openaiSecretKey = localStorage.getItem('apiKey');
+    const aiModel = localStorage.getItem('modelName') || 'gpt-4o';
+    const temperature = 1.0;
+    const maxTokens = 3000;
+
+    if (!openaiSecretKey) {
+      console.error('OpenAI secret key is missing');
+      return;
+    }
+
+    setAnswer(''); // Clear previous answer
+
+    const abortController = new AbortController();
+
+    // Combine prompt and context if needed
+    const fullPrompt = context ? `${prompt}\n\n${context}` : prompt;
+
+    // Call streamAnswer
+    await streamAnswer(
+      abortController,
+      openaiSecretKey,
+      fullPrompt,
+      images,
+      temperature,
+      maxTokens,
+      (partialText: string) => {
+        setAnswer((prev) => prev + partialText);
+      },
+      (error: string) => {
+        console.error(error);
+      },
+      aiModel
+    );
   }
 
   return (
@@ -52,7 +93,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
         value={context}
         onChange={(e) => setContext(e.target.value)}
         onPaste={handlePaste}
-        ref={textareaRef} 
+        ref={textareaRef}
       />
       {images.map((img, index) => (
         <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
