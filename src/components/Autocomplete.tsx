@@ -162,6 +162,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
               deleteItem(item);
               setMruItems((prevItems) => prevItems.filter((i) => i !== item));
             }}
+            style={{ cursor: 'no-drop', border: 'none', padding: '4px', color: 'red' }}
           >
             Delete
           </button>
