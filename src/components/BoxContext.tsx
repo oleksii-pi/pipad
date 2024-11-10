@@ -10,7 +10,9 @@ interface BoxContextProps {
 export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [isStreaming, setIsStreaming] = useState(false); // Added state for streaming
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const abortControllerRef = useRef<AbortController | null>(null); // Ref for AbortController
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -44,6 +46,19 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
   async function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
     event.preventDefault();
 
+    if (isStreaming) {
+      // If streaming, cancel the streaming
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      setIsStreaming(false);
+      return;
+    }
+
+    // If not streaming, start streaming
+    setAnswer(''); // Clear previous answer
+    setIsStreaming(true);
+
     // Save prompt to localStorage
     const prompts = JSON.parse(localStorage.getItem('prompts') || '[]').filter((p: string) => p !== prompt);
     prompts.unshift(prompt);
@@ -57,32 +72,39 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
 
     if (!openaiSecretKey) {
       console.error('OpenAI secret key is missing');
+      setIsStreaming(false);
       return;
     }
 
-    setAnswer(''); // Clear previous answer
-
+    // Create a new AbortController and store it in the ref
     const abortController = new AbortController();
+    abortControllerRef.current = abortController;
 
     // Combine prompt and context if needed
     const fullPrompt = context ? `${prompt}\n\n${context}` : prompt;
 
     // Call streamAnswer
-    await streamAnswer(
-      abortController,
-      openaiSecretKey,
-      fullPrompt,
-      images,
-      temperature,
-      maxTokens,
-      (partialText: string) => {
-        setAnswer((prev) => prev + partialText);
-      },
-      (error: string) => {
-        console.error(error);
-      },
-      aiModel
-    );
+    try {
+      await streamAnswer(
+        abortController,
+        openaiSecretKey,
+        fullPrompt,
+        images,
+        temperature,
+        maxTokens,
+        (partialText: string) => {
+          setAnswer((prev) => prev + partialText);
+        },
+        (error: string) => {
+          console.error(error);
+        },
+        aiModel
+      );
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsStreaming(false);
+    }
   }
 
   return (
@@ -99,7 +121,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
         <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
       ))}
       <button id="submitButton" onClick={handleSubmit} style={{ position: 'absolute', bottom: 4, right: 4 }}>
-        Submit
+        {isStreaming ? 'Cancel' : 'Submit'}
       </button>
     </div>
   );
