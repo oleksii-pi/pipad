@@ -7,9 +7,10 @@ import { SettingsDialog } from './SettingsDialog';
 interface BoxPromptProps {
   prompt: string;
   setPrompt: (value: string) => void;
+  setAnswer: (value: string) => void;
 }
 
-export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt }) => {
+export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnswer }) => {
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   const handleSettingsClick = () => {
@@ -31,11 +32,16 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt }) => {
     localStorage.setItem('prompts', JSON.stringify(newItems));
   };
 
+  const handleAutocompleteChange = (text: string) => {
+    setPrompt(text);
+    setAnswer('');
+  };
+
   return (
     <div id="promptBox" style={{ position: 'relative' }}>
       <Autocomplete
         value={prompt}
-        onChange={setPrompt}
+        onChange={handleAutocompleteChange}
         getItems={getMRUPrompts}
         deleteItem={deleteItemFromMRU}
       >

@@ -117,13 +117,18 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
     }
   }
 
+  const handeTextAreaChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setAnswer('');
+    setContext(e.target.value);
+  };
+
   return (
     <div id="contextBox">
       <textarea
         id="contextTextArea"
         placeholder="Context"
         value={context}
-        onChange={(e) => setContext(e.target.value)}
+        onChange={handeTextAreaChange}
         onPaste={handlePaste}
         ref={textareaRef}
       />

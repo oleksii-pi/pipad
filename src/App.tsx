@@ -23,7 +23,7 @@ const App: React.FC = () => {
       {settingsOpen && <SettingsDialog onUpdate={() => setSettingsOpen(false)} />}
       <div className="left-panel" />
       <div className="center-panel">
-        <BoxPrompt prompt={prompt} setPrompt={setPrompt} />
+        <BoxPrompt prompt={prompt} setPrompt={setPrompt} setAnswer={setAnswer} />
         <BoxContext prompt={prompt} setAnswer={setAnswer} />
         <BoxAnswer answer={answer} />
       </div>
