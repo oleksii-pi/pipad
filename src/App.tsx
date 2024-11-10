@@ -12,6 +12,8 @@ const App: React.FC = () => {
   const [answer, setAnswer] = useState('');
 
   useEffect(() => {
+    setPrompt(JSON.parse(localStorage.getItem('prompts') || '[""]')[0]);
+
     const modelName = localStorage.getItem('modelName');
     if (!modelName) setSettingsOpen(true);
   }, []);
