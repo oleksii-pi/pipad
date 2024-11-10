@@ -229,3 +229,7 @@ button {
 .modal button:last-of-type:hover {
   background-color: #0056b3;
 }
+
+button:focus {
+  outline: 2px solid rgb(0, 196, 0);
+}

@@ -16,7 +16,7 @@ export const BoxPrompt: React.FC = () => {
     setIsSettingsDialogOpen(false);
   };
 
-  const getItems = async () => {
+  const getMRUPrompts = async () => {
     // Generate 100 example items
     const items = [];
     for (let i = 1; i <= 100; i++) {
@@ -25,8 +25,8 @@ export const BoxPrompt: React.FC = () => {
     return items;
   };
 
-  const deleteItem = async (item: string) => {
-    // Remove the item from your data source
+  const deleteItemFromMRU = async (item: string) => {
+    // Remove the item from MRU
   };
 
   return (
@@ -34,8 +34,8 @@ export const BoxPrompt: React.FC = () => {
       <Autocomplete
         value={prompt}
         onChange={setPrompt}
-        getItems={getItems}
-        deleteItem={deleteItem}
+        getItems={getMRUPrompts}
+        deleteItem={deleteItemFromMRU}
       >
         <textarea
           id="promptTextArea"
@@ -44,7 +44,7 @@ export const BoxPrompt: React.FC = () => {
       </Autocomplete>
       <button
         id="settingsButton"
-        style={{ position: 'absolute', top: 0, right: 0 }}
+        style={{ position: 'absolute', top: 4, right: 4 }}
         onClick={handleSettingsClick}
         tabIndex={-1}
       >

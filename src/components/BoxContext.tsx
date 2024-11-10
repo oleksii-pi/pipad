@@ -30,7 +30,7 @@ export const BoxContext: React.FC = () => {
       {images.map((img, index) => (
         <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
       ))}
-      <button id="submitButton" style={{ position: 'absolute', bottom: 0, right: 0 }}>
+      <button id="submitButton" style={{ position: 'absolute', bottom: 4, right: 4 }}>
         Submit
       </button>
     </div>
