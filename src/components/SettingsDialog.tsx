@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 
 export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate }) => {
   const [modelName, setModelName] = useState(localStorage.getItem('modelName') || 'gpt-4o');
-  const [apiKey, setApiKey] = useState(localStorage.getItem('apiKey') || '');
+  const [apiKey, setApiKey] = useState('');
   const [darkMode, setDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode') || 'true'));
 
   const handleUpdate = () => {
     localStorage.setItem('modelName', modelName);
-    localStorage.setItem('apiKey', apiKey);
+    if (apiKey !== '') localStorage.setItem('apiKey', apiKey);
     localStorage.setItem('darkMode', JSON.stringify(darkMode));
     onUpdate();
   };
