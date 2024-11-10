@@ -4,8 +4,12 @@ import { Autocomplete } from './Autocomplete';
 import { FaCog } from 'react-icons/fa';
 import { SettingsDialog } from './SettingsDialog';
 
-export const BoxPrompt: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
+interface BoxPromptProps {
+  prompt: string;
+  setPrompt: (value: string) => void;
+}
+
+export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt }) => {
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
 
   const handleSettingsClick = () => {
@@ -17,16 +21,14 @@ export const BoxPrompt: React.FC = () => {
   };
 
   const getMRUPrompts = async () => {
-    // Generate 100 example items
-    const items = [];
-    for (let i = 1; i <= 100; i++) {
-      items.push(`Example ${i}`);
-    }
+    const items = JSON.parse(localStorage.getItem('prompts') || '[]');
     return items;
   };
 
   const deleteItemFromMRU = async (item: string) => {
-    // Remove the item from MRU
+    const items = JSON.parse(localStorage.getItem('prompts') || '[]');
+    const newItems = items.filter((i: string) => i !== item);
+    localStorage.setItem('prompts', JSON.stringify(newItems));
   };
 
   return (

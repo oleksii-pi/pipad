@@ -7,6 +7,7 @@ import './styles/globalStyles.css';
 
 const App: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [prompt, setPrompt] = useState('');
 
   useEffect(() => {
     const modelName = localStorage.getItem('modelName');
@@ -18,8 +19,8 @@ const App: React.FC = () => {
       {settingsOpen && <SettingsDialog onUpdate={() => setSettingsOpen(false)} />}
       <div className="left-panel" />
       <div className="center-panel">
-        <BoxPrompt />
-        <BoxContext />
+        <BoxPrompt prompt={prompt} setPrompt={setPrompt} />
+        <BoxContext prompt={prompt} />
         <BoxAnswer />
       </div>
       <div className="right-panel" />

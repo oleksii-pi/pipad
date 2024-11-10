@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 
-export const BoxContext: React.FC = () => {
+interface BoxContextProps {
+  prompt: string;
+}
+
+export const BoxContext: React.FC<BoxContextProps> = ({ prompt }) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
 
@@ -18,6 +22,13 @@ export const BoxContext: React.FC = () => {
     }
   };
 
+  function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+    const prompts = JSON.parse(localStorage.getItem('prompts') || '[]')
+      .filter((p: string) => p !== prompt);
+    prompts.unshift(prompt); 
+    localStorage.setItem('prompts', JSON.stringify(prompts));
+  }
+
   return (
     <div id="contextBox">
       <textarea
@@ -30,7 +41,7 @@ export const BoxContext: React.FC = () => {
       {images.map((img, index) => (
         <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
       ))}
-      <button id="submitButton" style={{ position: 'absolute', bottom: 4, right: 4 }}>
+      <button id="submitButton" onClick={handleSubmit} style={{ position: 'absolute', bottom: 4, right: 4 }}>
         Submit
       </button>
     </div>
