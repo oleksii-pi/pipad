@@ -5,14 +5,20 @@ import { streamAnswer } from '../services/openaiApi';
 interface BoxContextProps {
   prompt: string;
   setAnswer: React.Dispatch<React.SetStateAction<string>>;
+  isStreaming: boolean;
+  setIsStreaming: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => {
+export const BoxContext: React.FC<BoxContextProps> = ({
+  prompt,
+  setAnswer,
+  isStreaming,
+  setIsStreaming,
+}) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
-  const [isStreaming, setIsStreaming] = useState(false); // Added state for streaming
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const abortControllerRef = useRef<AbortController | null>(null); // Ref for AbortController
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     const focusTextarea = () => {
@@ -53,7 +59,9 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
     }
   };
 
-  async function handleSubmit(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): Promise<void> {
+  async function handleSubmit(
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ): Promise<void> {
     event.preventDefault();
 
     if (isStreaming) {
@@ -113,7 +121,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({ prompt, setAnswer }) => 
     } catch (e) {
       console.error(e);
     } finally {
-      setIsStreaming(false);
+      setIsStreaming(false); // Streaming is done
     }
   }
 
