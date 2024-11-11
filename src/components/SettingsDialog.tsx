@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate }) => {
   const [modelName, setModelName] = useState(localStorage.getItem('modelName') || 'gpt-4o');
   const [apiKey, setApiKey] = useState('');
-  const [darkMode, setDarkMode] = useState(JSON.parse(localStorage.getItem('darkMode') || 'true'));
+  const [darkMode, setDarkMode] = useState(
+    JSON.parse(localStorage.getItem('darkMode') || 'true')
+  );
 
   const handleUpdate = () => {
     localStorage.setItem('modelName', modelName);
@@ -22,7 +24,7 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
           value={modelName}
           onChange={(e) => setModelName(e.target.value)}
         />
-        
+
         <label>OpenAI Key:</label>
         <input
           type="password"
@@ -30,7 +32,12 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
           value={apiKey}
           onChange={(e) => setApiKey(e.target.value)}
         />
-        <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.6em' }}>
+        <a
+          href="https://platform.openai.com/api-keys"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ fontSize: '0.6em' }}
+        >
           Get your OpenAI API key
         </a>
 
@@ -42,7 +49,7 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
           />
           Dark mode
         </label>
-        
+
         <div className="button-row">
           <button onClick={onUpdate}>Cancel</button>
           <button onClick={handleUpdate}>Update</button>

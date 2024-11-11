@@ -1,0 +1,85 @@
+/* /styles/globalStyles.dark.css */
+.app.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.app.dark-mode .left-panel,
+.app.dark-mode .right-panel,
+.app.dark-mode .center-panel {
+  background-color: #121212;
+}
+
+.app.dark-mode #promptBox,
+.app.dark-mode #contextBox,
+.app.dark-mode #answerBox {
+  background-color: #1e1e1e;
+  border: 1px solid #333;
+}
+
+.app.dark-mode textarea {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+
+.app.dark-mode button {
+  color: #e0e0e0;
+}
+
+.app.dark-mode #settingsButton {
+  color: #e0e0e0;
+}
+
+.app.dark-mode #submitButton {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.app.dark-mode #submitButton:hover {
+  background-color: #0056b3;
+}
+
+.app.dark-mode .autocomplete {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}
+
+.app.dark-mode .autocomplete div:hover {
+  background-color: #333;
+}
+
+.app.dark-mode .modal {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.app.dark-mode .modal .modal-content {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}
+
+.app.dark-mode .modal input[type="text"],
+.app.dark-mode .modal input[type="password"] {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border: 1px solid #333;
+}
+
+.app.dark-mode .modal button:first-of-type {
+  background-color: #333;
+  color: #e0e0e0;
+}
+
+.app.dark-mode .modal button:last-of-type {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.app.dark-mode .modal button:last-of-type:hover {
+  background-color: #0056b3;
+}
+
+.app.dark-mode ::placeholder {
+  color: #bbb;
+}
