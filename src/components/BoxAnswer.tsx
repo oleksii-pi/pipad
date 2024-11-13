@@ -13,7 +13,7 @@ export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStrea
   useEffect(() => {
     if (!isStreaming) {
       // Streaming is completed, focus and select all text in the textarea
-      if (textareaRef.current) {
+      if (textareaRef.current && textareaRef.current.value !== '') {
         textareaRef.current.focus();
         textareaRef.current.select();
       }
