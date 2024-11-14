@@ -1,5 +1,8 @@
 // src/components/BoxAnswer.tsx
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
+import rehypeHighlight from 'rehype-highlight';
+import '../styles/github-markdown-light.css'
 
 interface BoxAnswerProps {
   answer: string;
@@ -9,27 +12,42 @@ interface BoxAnswerProps {
 
 export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStreaming }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [isMarkdown, setIsMarkdown] = useState(false);
 
   useEffect(() => {
-    if (!isStreaming) {
+    if (!isStreaming && !isMarkdown) {
       // Streaming is completed, focus and select all text in the textarea
       if (textareaRef.current && textareaRef.current.value !== '') {
         textareaRef.current.focus();
         textareaRef.current.select();
       }
     }
-  }, [isStreaming]);
+  }, [isStreaming, isMarkdown]);
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMarkdown(e.target.checked);
+  };
 
   return (
     <div id="answerBox">
-      <textarea
-        id="answerTextArea"
-        placeholder="Answer"
-        value={answer}
-        onChange={(e) => setAnswer(e.target.value)}
-        ref={textareaRef}
-      />
+      <label>
+        <input type="checkbox" checked={isMarkdown} onChange={handleCheckboxChange} />
+        Markdown
+      </label>
+
+      {isMarkdown ? (
+        <div className="markdown-rendered">
+          <ReactMarkdown rehypePlugins={[rehypeHighlight]}>{answer}</ReactMarkdown>
+        </div>
+      ) : (
+        <textarea
+          id="answerTextArea"
+          placeholder="Answer"
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          ref={textareaRef}
+        />
+      )}
     </div>
   );
 };
-
