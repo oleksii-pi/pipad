@@ -6,6 +6,7 @@ import { BoxAnswer } from './components/BoxAnswer';
 import { SettingsDialog } from './components/SettingsDialog';
 import './styles/globalStyles.css';
 import './styles/globalStyles.dark.css';
+import Split from 'react-split';
 
 const App: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -39,14 +40,37 @@ const App: React.FC = () => {
       )}
       <div className="left-panel" />
       <div className="center-panel">
-        <BoxPrompt prompt={prompt} setPrompt={setPrompt} setAnswer={setAnswer} />
-        <BoxContext
-          prompt={prompt}
-          setAnswer={setAnswer}
-          isStreaming={isStreaming}
-          setIsStreaming={setIsStreaming}
-        />
-        <BoxAnswer answer={answer} setAnswer={setAnswer} isStreaming={isStreaming} />
+        <Split
+          style={{width: "100%", height: "100%"}}
+          sizes={[5, 95]}       // Initial sizes of the panes in percentages
+          minSize={50}          // Minimum size of each pane in pixels
+          gutterSize={4}        // Size of the gutter in pixels
+          direction="vertical" // Direction of the splitter
+          cursor="row-resize"    // Cursor to display when hovering over the gutter
+        >
+          <div>
+            <BoxPrompt prompt={prompt} setPrompt={setPrompt} setAnswer={setAnswer} />
+          </div>
+          <Split
+            sizes={[20, 80]}       // Initial sizes of the panes in percentages
+            minSize={100}          // Minimum size of each pane in pixels
+            gutterSize={4}        // Size of the gutter in pixels
+            direction="vertical" // Direction of the splitter
+            cursor="row-resize"    // Cursor to display when hovering over the gutter
+          >
+            <div style={{width: "100%"}}>
+              <BoxContext
+                prompt={prompt}
+                setAnswer={setAnswer}
+                isStreaming={isStreaming}
+                setIsStreaming={setIsStreaming}
+              />
+            </div>
+            <div style={{width: "100%"}}>
+              <BoxAnswer answer={answer} setAnswer={setAnswer} isStreaming={isStreaming} />
+            </div>
+          </Split>
+        </Split>
       </div>
       <div className="right-panel" />
     </div>

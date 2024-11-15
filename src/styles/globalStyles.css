@@ -34,6 +34,7 @@ body {
   flex-direction: column;
   padding: 10px;
   max-width: 700px;
+  height: 100vh;
   flex: 1;
 }
 
@@ -42,23 +43,23 @@ body {
 #contextBox,
 #answerBox {
   position: relative;
-  margin-bottom: 10px;
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #fff;
   padding: 10px;
   overflow: hidden;
 }
+
 #promptBox {
-  height: 10vh; /* Approximately 2 lines */
+  height: 100%;
 }
 
 #contextBox {
-  height: 20vh; /* Approximately 10 lines */
+  height: 100%;
 }
 
 #answerBox {
-  height: 60vh; /* Rest of the space */
+  height: 100%;
 }
 
 /* Text Areas */
@@ -237,4 +238,12 @@ button:focus {
   right: 2px;
   opacity: 0.5;
   font-size: 14px;
+}
+
+.gutter {
+  background-color: #cccccc33;
+}
+
+.gutter.gutter-vertical {
+  cursor: row-resize;
 }
