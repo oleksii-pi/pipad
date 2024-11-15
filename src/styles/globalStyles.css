@@ -238,3 +238,11 @@ button:focus {
   max-height: 100%;
   overflow: auto;
 }
+
+#answerBox input[type="checkbox"] {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  opacity: 0.5;
+  font-size: 14px;
+}

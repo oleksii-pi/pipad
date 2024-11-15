@@ -30,10 +30,7 @@ export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStrea
 
   return (
     <div id="answerBox">
-      <label>
-        <input type="checkbox" checked={isMarkdown} onChange={handleCheckboxChange} />
-        Markdown
-      </label>
+      <input type="checkbox" title='Markdown preview' tabIndex={-1} checked={isMarkdown} onChange={handleCheckboxChange} />
 
       {isMarkdown ? (
         <div className="markdown-rendered">
