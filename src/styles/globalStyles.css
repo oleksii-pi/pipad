@@ -153,14 +153,6 @@ button {
   border-radius: 3px;
 }
 
-/* Splitter Styling */
-.splitter {
-  height: 5px;
-  background-color: #ccc;
-  cursor: row-resize;
-  margin: 10px 0;
-}
-
 /* Modal for Settings */
 .modal {
   position: fixed;
