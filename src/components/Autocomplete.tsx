@@ -81,8 +81,9 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           (prevIndex + filteredItems.length - 1) % filteredItems.length
         );
       } else if (e.key === 'Enter') {
-        e.preventDefault();
+        
         if (selectedIndex >= 0 && selectedIndex < filteredItems.length) {
+          e.preventDefault();
           const selectedItem = filteredItems[selectedIndex];
           onChange(selectedItem);
           updateMru(selectedItem);
