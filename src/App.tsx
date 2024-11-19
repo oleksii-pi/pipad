@@ -13,7 +13,7 @@ const App: React.FC = () => {
   const [prompt, setPrompt] = useState('');
   const [answer, setAnswer] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  const [darkMode, setDarkMode] = useState(true); // Add darkMode state
+  const [darkMode, setDarkMode] = useState(false); // Add darkMode state
 
   useEffect(() => {
     setPrompt(JSON.parse(localStorage.getItem('prompts') || '[""]')[0]);
@@ -22,7 +22,7 @@ const App: React.FC = () => {
     if (!modelName) setSettingsOpen(true);
 
     // Read darkMode setting from localStorage
-    const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'true');
+    const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
     setDarkMode(storedDarkMode);
   }, []);
 
@@ -32,7 +32,7 @@ const App: React.FC = () => {
         <SettingsDialog
           onUpdate={() => {
             // Update darkMode when settings dialog is closed
-            const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'true');
+            const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
             setDarkMode(storedDarkMode);
             setSettingsOpen(false);
           }}

@@ -5,7 +5,7 @@ export const SettingsDialog: React.FC<{ onUpdate: () => void }> = ({ onUpdate })
   const [modelName, setModelName] = useState(localStorage.getItem('modelName') || 'gpt-4o');
   const [apiKey, setApiKey] = useState('');
   const [darkMode, setDarkMode] = useState(
-    JSON.parse(localStorage.getItem('darkMode') || 'true')
+    JSON.parse(localStorage.getItem('darkMode') || 'false')
   );
 
   const handleUpdate = () => {
