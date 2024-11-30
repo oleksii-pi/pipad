@@ -4,7 +4,6 @@ export async function streamAnswer(
   text: string,
   imagesBase64Array: string[],
   temperature: number,
-  maxTokens: number,
   onPartialResponse: (text: string) => void,
   onError: (error: string) => void,
   aiModel: string
@@ -44,7 +43,6 @@ export async function streamAnswer(
       body: JSON.stringify({
         model: aiModel,
         messages: messages,
-        max_tokens: maxTokens,
         temperature: temperature,
         n: 1,
         stream: true,

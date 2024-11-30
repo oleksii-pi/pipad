@@ -86,7 +86,6 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     const openaiSecretKey = localStorage.getItem('apiKey');
     const aiModel = localStorage.getItem('modelName') || 'gpt-4o';
     const temperature = 1.0;
-    const maxTokens = 3000;
 
     if (!openaiSecretKey) {
       console.error('OpenAI secret key is missing');
@@ -109,7 +108,6 @@ export const BoxContext: React.FC<BoxContextProps> = ({
         fullPrompt,
         images,
         temperature,
-        maxTokens,
         (partialText: string) => {
           setAnswer((prev) => prev + partialText);
         },
