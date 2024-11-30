@@ -38,7 +38,7 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
   };
 
   return (
-    <div id="promptBox" style={{ position: 'relative' }}>
+    <div id="promptBox">
       <Autocomplete
         value={prompt}
         onChange={handleAutocompleteChange}

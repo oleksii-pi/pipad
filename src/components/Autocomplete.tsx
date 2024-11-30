@@ -174,7 +174,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
 
   return (
     <>
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: 'relative', height: '100%' }}>
         {clonedChild}
       </div>
       {popup && createPortal(popup, document.body)}
