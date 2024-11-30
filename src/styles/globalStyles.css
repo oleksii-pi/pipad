@@ -42,6 +42,7 @@ body {
 #promptBox,
 #contextBox,
 #answerBox {
+  position: relative;
   border: 1px solid #ddd;
   border-radius: 5px;
   background-color: #fff;
