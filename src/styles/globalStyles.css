@@ -29,6 +29,13 @@ body {
   flex: 0.5;
 }
 
+@media (max-width: 700px) {
+  .left-panel,
+  .right-panel {
+    flex: 0;
+  }
+}
+
 .center-panel {
   display: flex;
   flex-direction: column;
