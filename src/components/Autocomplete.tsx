@@ -55,7 +55,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
       const rect = inputRef.current.getBoundingClientRect();
       setPopupStyle({
         position: 'absolute',
-        top: rect.bottom + window.scrollY,
+        top: rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
         width: rect.width,
         backgroundColor: 'white',
@@ -96,6 +96,11 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     }
   };
 
+  const handleDoubleClick = () => {
+    onChange('');
+    setShowPopup(true);
+  }
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
     setShowPopup(true); // Show popup when user types
@@ -130,6 +135,12 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     value,
     onChange: handleChange,
     onKeyDown: handleKeyDown,
+    onDoubleClick: handleDoubleClick,
+    onTouchStart: (e: React.TouchEvent<HTMLTextAreaElement>) => {
+      if (e.touches.length === 2) {
+        handleDoubleClick();
+      }
+    },
   });
 
   const popup = showPopup && filteredItems.length > 0 && (
