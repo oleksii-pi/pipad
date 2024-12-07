@@ -1,4 +1,4 @@
-// BoxPrompt.tsx
+// src/components/BoxPrompt.tsx
 import React, { useState } from 'react';
 import { Autocomplete } from './Autocomplete';
 import { FaCog } from 'react-icons/fa';
