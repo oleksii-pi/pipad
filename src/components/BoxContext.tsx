@@ -1,6 +1,7 @@
 // src/components/BoxContext.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { streamAnswer } from '../services/openaiApi';
+import { FaCamera } from 'react-icons/fa';
 
 interface BoxContextProps {
   prompt: string;
@@ -17,6 +18,10 @@ export const BoxContext: React.FC<BoxContextProps> = ({
 }) => {
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
+  const [showCamera, setShowCamera] = useState(false);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
@@ -78,7 +83,8 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     setIsStreaming(true);
 
     // Save prompt to localStorage
-    const prompts = JSON.parse(localStorage.getItem('prompts') || '[]').filter((p: string) => p !== prompt);
+    const storedPrompts = localStorage.getItem('prompts');
+    const prompts = storedPrompts ? JSON.parse(storedPrompts).filter((p: string) => p !== prompt) : [];
     prompts.unshift(prompt);
     localStorage.setItem('prompts', JSON.stringify(prompts));
 
@@ -93,14 +99,11 @@ export const BoxContext: React.FC<BoxContextProps> = ({
       return;
     }
 
-    // Create a new AbortController and store it in the ref
     const abortController = new AbortController();
     abortControllerRef.current = abortController;
 
-    // Combine prompt and context if needed
     const fullPrompt = context ? `${prompt}\n\n${context}` : prompt;
 
-    // Call streamAnswer
     try {
       await streamAnswer(
         abortController,
@@ -119,7 +122,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     } catch (e) {
       console.error(e);
     } finally {
-      setIsStreaming(false); // Streaming is done
+      setIsStreaming(false);
     }
   }
 
@@ -128,8 +131,55 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     setContext(e.target.value);
   };
 
+  const openCamera = async () => {
+    setShowCamera(true);
+    try {
+      const constraints = {
+        video: {
+          facingMode: { ideal: 'environment' }, // Suggest environment-facing camera
+        },
+        audio: false,
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        // On iPhone/iOS Safari, needs muted and playsInline for autoplay
+        videoRef.current.setAttribute('playsinline', 'true');
+        await videoRef.current.play().catch(err => console.error('Video play error:', err));
+      }
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setShowCamera(false);
+    }
+  };
+
+  const handleCapture = () => {
+    if (!videoRef.current) return;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = videoRef.current.videoWidth;
+    canvas.height = videoRef.current.videoHeight;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.drawImage(videoRef.current, 0, 0);
+      const dataUrl = canvas.toDataURL('image/png');
+      setImages(prev => [...prev, dataUrl]);
+    }
+
+    closeCamera();
+  };
+
+  const closeCamera = () => {
+    setShowCamera(false);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+    }
+  };
+
   return (
-    <div id="contextBox">
+    <div id="contextBox" style={{ position: 'relative' }}>
       <textarea
         id="contextTextArea"
         placeholder="Context"
@@ -138,12 +188,46 @@ export const BoxContext: React.FC<BoxContextProps> = ({
         onPaste={handlePaste}
         ref={textareaRef}
       />
-      {images.map((img, index) => (
-        <img key={index} src={img} alt={`Preview ${index}`} width="64" height="64" />
-      ))}
+      <div style={{ position: 'absolute', bottom: 4, left: 4 }}>
+        {images.map((img, index) => (
+          <img key={index} src={img} alt={`Preview ${index}`} width="48" height="48" />
+        ))}
+      </div>
+      <div style={{ position: 'absolute', top: 4, right: 4 }}>
+        <button onClick={openCamera} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
+          <FaCamera size={24} />
+        </button>
+      </div>
       <button id="submitButton" onClick={handleSubmit} style={{ position: 'absolute', bottom: 4, right: 4 }}>
         {isStreaming ? 'Cancel' : 'Submit'}
       </button>
+
+      {showCamera && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            background: 'black',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 9999
+          }}
+          onClick={handleCapture}
+        >
+          <video
+            ref={videoRef}
+            style={{ width: '100%', height: 'auto', maxWidth: '100%', objectFit: 'cover' }}
+            autoPlay
+            playsInline
+            muted
+          />
+        </div>
+      )}
     </div>
   );
 };
