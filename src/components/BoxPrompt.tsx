@@ -56,7 +56,7 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
         onClick={handleSettingsClick}
         tabIndex={-1}
       >
-        <FaCog />
+        <FaCog size={24}/>
       </button>
       {isSettingsDialogOpen && (
         <SettingsDialog onUpdate={handleCloseSettingsDialog} />
