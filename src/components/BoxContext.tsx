@@ -195,7 +195,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
         ))}
       </div>
       <div style={{ position: 'absolute', top: 4, right: 4 }}>
-        <button onClick={openCamera} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
+        <button tabIndex={-1} onClick={openCamera} style={{ background: 'transparent', border: 'none', cursor: 'pointer' }}>
           <FaCamera size={24} />
         </button>
       </div>
