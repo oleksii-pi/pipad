@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Autocomplete } from './Autocomplete';
 import { FaCog } from 'react-icons/fa';
 import { SettingsDialog } from './SettingsDialog';
+import { StorageKey } from '../constants/StorageKey';
+import { useStorage } from '../StorageContext';
 
 interface BoxPromptProps {
   prompt: string;
@@ -12,6 +14,9 @@ interface BoxPromptProps {
 
 export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnswer }) => {
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
+  
+  const { storage, setStorage } = useStorage();
+  const prompts = storage[StorageKey.Prompts] as string[];
 
   const handleSettingsClick = () => {
     setIsSettingsDialogOpen(true);
@@ -21,15 +26,14 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
     setIsSettingsDialogOpen(false);
   };
 
-  const getMRUPrompts = async () => {
-    const items = JSON.parse(localStorage.getItem('prompts') || '[]');
-    return items;
+  const getMRUPrompts = () => {
+    return Promise.resolve(prompts);
   };
 
-  const deleteItemFromMRU = async (item: string) => {
-    const items = JSON.parse(localStorage.getItem('prompts') || '[]');
-    const newItems = items.filter((i: string) => i !== item);
-    localStorage.setItem('prompts', JSON.stringify(newItems));
+  const deleteItemFromMRU = (item: string) => {
+    const newItems = prompts.filter((i: string) => i !== item);
+    setStorage(StorageKey.Prompts, newItems);
+    return Promise.resolve();
   };
 
   const handleAutocompleteChange = (text: string) => {
@@ -59,7 +63,7 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
         <FaCog size={24}/>
       </button>
       {isSettingsDialogOpen && (
-        <SettingsDialog onUpdate={handleCloseSettingsDialog} />
+        <SettingsDialog onClose={handleCloseSettingsDialog} />
       )}
     </div>
   );

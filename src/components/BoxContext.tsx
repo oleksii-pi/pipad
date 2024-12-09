@@ -2,6 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { streamAnswer } from '../services/openaiApi';
 import { FaCamera } from 'react-icons/fa';
+import { StorageKey } from '../constants/StorageKey';
+import { useStorage } from '../StorageContext';
 
 interface BoxContextProps {
   prompt: string;
@@ -16,6 +18,11 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   isStreaming,
   setIsStreaming,
 }) => {
+  const { storage, setStorage } = useStorage();
+  const aiModel = storage[StorageKey.ModelName] as string;
+  const openaiSecretKey = storage[StorageKey.ApiKey] as string;
+  const prompts = storage[StorageKey.Prompts] as string[];
+
   const [context, setContext] = useState('');
   const [images, setImages] = useState<string[]>([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -69,8 +76,13 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   ): Promise<void> {
     event.preventDefault();
 
+    if (!openaiSecretKey) {
+      console.error('OpenAI secret key is missing');
+      setIsStreaming(false);
+      return;
+    }
+
     if (isStreaming) {
-      // If streaming, cancel the streaming
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
@@ -78,26 +90,15 @@ export const BoxContext: React.FC<BoxContextProps> = ({
       return;
     }
 
-    // If not streaming, start streaming
     setAnswer(''); // Clear previous answer
     setIsStreaming(true);
 
     // Save prompt to localStorage
-    const storedPrompts = localStorage.getItem('prompts');
-    const prompts = storedPrompts ? JSON.parse(storedPrompts).filter((p: string) => p !== prompt) : [];
-    prompts.unshift(prompt);
-    localStorage.setItem('prompts', JSON.stringify(prompts));
-
-    // Get settings
-    const openaiSecretKey = localStorage.getItem('apiKey');
-    const aiModel = localStorage.getItem('modelName') || 'gpt-4o';
+    const newPrompts = prompts.filter((p: string) => p !== prompt);
+    newPrompts.unshift(prompt);
+    setStorage(StorageKey.Prompts, newPrompts)
+    
     const temperature = 1.0;
-
-    if (!openaiSecretKey) {
-      console.error('OpenAI secret key is missing');
-      setIsStreaming(false);
-      return;
-    }
 
     const abortController = new AbortController();
     abortControllerRef.current = abortController;

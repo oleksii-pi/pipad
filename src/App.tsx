@@ -1,5 +1,5 @@
 // src/App.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { BoxPrompt } from './components/BoxPrompt';
 import { BoxContext } from './components/BoxContext';
 import { BoxAnswer } from './components/BoxAnswer';
@@ -7,33 +7,26 @@ import { SettingsDialog } from './components/SettingsDialog';
 import './styles/globalStyles.css';
 import './styles/globalStyles.dark.css';
 import Split from 'react-split';
+import { StorageKey } from './constants/StorageKey';
+import { useStorage } from './StorageContext';
 
 const App: React.FC = () => {
-  const [settingsOpen, setSettingsOpen] = useState(false);
-  const [prompt, setPrompt] = useState('');
+  const { storage } = useStorage();
+  const storedPrompts = storage[StorageKey.Prompts] as string[];
+  const storedApiKey = storage[StorageKey.ApiKey];
+  const storedDarkMode = storage[StorageKey.DarkMode] as boolean;
+
+  const [prompt, setPrompt] = useState(storedPrompts.length > 0 ? storedPrompts[0] : '');
   const [answer, setAnswer] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
-  const [darkMode, setDarkMode] = useState(false); // Add darkMode state
-
-  useEffect(() => {
-    setPrompt(JSON.parse(localStorage.getItem('prompts') || '[""]')[0]);
-
-    const modelName = localStorage.getItem('modelName');
-    if (!modelName) setSettingsOpen(true);
-
-    // Read darkMode setting from localStorage
-    const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
-    setDarkMode(storedDarkMode);
-  }, []);
+  const [settingsOpen, setSettingsOpen] = useState(storedApiKey === '');
 
   return (
-    <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
+    <div className={`app ${storedDarkMode ? 'dark-mode' : ''}`}>
       {settingsOpen && (
         <SettingsDialog
-          onUpdate={() => {
-            // Update darkMode when settings dialog is closed
-            const storedDarkMode = JSON.parse(localStorage.getItem('darkMode') || 'false');
-            setDarkMode(storedDarkMode);
+          onClose={() => {
+            // reload storedDarkMode from local storage and update UI
             setSettingsOpen(false);
           }}
         />
@@ -45,8 +38,8 @@ const App: React.FC = () => {
           sizes={[5, 95]}       // Initial sizes of the panes in percentages
           minSize={50}          // Minimum size of each pane in pixels
           gutterSize={4}        // Size of the gutter in pixels
-          direction="vertical" // Direction of the splitter
-          cursor="row-resize"    // Cursor to display when hovering over the gutter
+          direction="vertical"  // Direction of the splitter
+          cursor="row-resize"   // Cursor to display when hovering over the gutter
         >
           <div>
             <BoxPrompt prompt={prompt} setPrompt={setPrompt} setAnswer={setAnswer} />
@@ -54,8 +47,8 @@ const App: React.FC = () => {
           <Split
             sizes={[20, 80]}       // Initial sizes of the panes in percentages
             minSize={100}          // Minimum size of each pane in pixels
-            gutterSize={4}        // Size of the gutter in pixels
-            direction="vertical" // Direction of the splitter
+            gutterSize={4}         // Size of the gutter in pixels
+            direction="vertical"   // Direction of the splitter
             cursor="row-resize"    // Cursor to display when hovering over the gutter
           >
             <div style={{width: "100%"}}>
