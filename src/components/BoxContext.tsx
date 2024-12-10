@@ -198,7 +198,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
             width="48"
             height="48"
             onClick={() => setImages(images.filter((_, i) => i !== index))}
-            style={{ cursor: 'no-drop' }}
+            style={{ cursor: 'pointer' }}
           />
         ))}
       </div>
