@@ -1,6 +1,7 @@
 // src/components/Autocomplete.tsx
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
+import { FaHistory } from 'react-icons/fa';
 
 interface AutocompleteProps {
   value: string;
@@ -96,11 +97,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     }
   };
 
-  const handleDoubleClick = () => {
-    onChange('');
-    setShowPopup(true);
-  }
-
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     onChange(e.target.value);
     setShowPopup(true); // Show popup when user types
@@ -135,12 +131,6 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     value,
     onChange: handleChange,
     onKeyDown: handleKeyDown,
-    onDoubleClick: handleDoubleClick,
-    onTouchStart: (e: React.TouchEvent<HTMLTextAreaElement>) => {
-      if (e.touches.length === 2) {
-        handleDoubleClick();
-      }
-    },
   });
 
   const popup = showPopup && filteredItems.length > 0 && (
@@ -184,11 +174,22 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   );
 
   return (
-    <>
-      <div style={{ position: 'relative', height: '100%' }}>
+    <div style={{ display: 'flex', alignItems: 'center', height: '100%' }}>
+      <button
+        style={{ background: 'transparent', border: 'none', cursor: 'pointer', marginRight: 10 }}
+        onClick={() => { 
+          onChange(""); 
+          setShowPopup(true); 
+          inputRef?.current?.focus();
+        }}
+        tabIndex={-1}
+        >
+        <FaHistory size={16} style={{opacity: 0.7}} />
+      </button>
+      <div style={{ position: 'relative', flex: 1, height: '100%'  }}>
         {clonedChild}
       </div>
       {popup && createPortal(popup, document.body)}
-    </>
+    </div>
   );
 };
