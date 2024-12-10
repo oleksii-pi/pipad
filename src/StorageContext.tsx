@@ -14,13 +14,22 @@ interface StorageContextValue {
 
 const StorageContext = createContext<StorageContextValue | undefined>(undefined);
 
+const tryParseJSON = (jsonString: string) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    console.error('Error parsing JSON:', e);
+  }
+  return jsonString;
+};
+
 export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [storage, setStorageState] = useState<StorageValues>(() => {
     const initialValues: Partial<StorageValues> = {};
     for (const key of Object.values(StorageKey)) {
       const item = localStorage.getItem(key);
       initialValues[key as StorageKey] = item !== null 
-        ? JSON.parse(item) 
+        ? tryParseJSON(item)
         : StorageDefaultValue[key as StorageKey];
     }
     return initialValues as StorageValues;
