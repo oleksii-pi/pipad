@@ -191,7 +191,15 @@ export const BoxContext: React.FC<BoxContextProps> = ({
       />
       <div style={{ position: 'absolute', bottom: 4, left: 4 }}>
         {images.map((img, index) => (
-          <img key={index} src={img} alt={`Preview ${index}`} width="48" height="48" />
+          <img
+            key={index}
+            src={img}
+            alt={`Preview ${index}`}
+            width="48"
+            height="48"
+            onClick={() => setImages(images.filter((_, i) => i !== index))}
+            style={{ cursor: 'no-drop' }}
+          />
         ))}
       </div>
       <div style={{ position: 'absolute', top: 4, right: 4 }}>
