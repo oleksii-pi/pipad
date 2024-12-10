@@ -1,7 +1,7 @@
 // src/components/BoxContext.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { streamAnswer } from '../services/openaiApi';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaTimes } from 'react-icons/fa';
 import { StorageKey } from '../constants/StorageKey';
 import { useStorage } from '../StorageContext';
 
@@ -156,6 +156,17 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     }
   };
 
+  const [showImageAdded, setShowImageAdded] = useState(false);
+
+  useEffect(() => {
+    if (showImageAdded) {
+      const timer = setTimeout(() => {
+        setShowImageAdded(false);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [showImageAdded]);
+
   const handleCapture = () => {
     if (!videoRef.current) return;
 
@@ -167,9 +178,8 @@ export const BoxContext: React.FC<BoxContextProps> = ({
       ctx.drawImage(videoRef.current, 0, 0);
       const dataUrl = canvas.toDataURL('image/png');
       setImages(prev => [...prev, dataUrl]);
+      setShowImageAdded(true);
     }
-
-    closeCamera();
   };
 
   const closeCamera = () => {
@@ -228,6 +238,23 @@ export const BoxContext: React.FC<BoxContextProps> = ({
           }}
           onClick={handleCapture}
         >
+          {showImageAdded && (
+            <div
+              style={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                background: 'rgba(0, 0, 0, 0.7)',
+                color: 'white',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                zIndex: 10000,
+              }}
+            >
+              Image has been added to the context...
+            </div>
+          )}
           <video
             ref={videoRef}
             style={{ width: '100%', height: 'auto', maxWidth: '100%', objectFit: 'cover' }}
@@ -235,6 +262,24 @@ export const BoxContext: React.FC<BoxContextProps> = ({
             playsInline
             muted
           />
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              closeCamera();
+            }}
+            style={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              background: 'red',
+              border: 'none',
+              borderRadius: '50%',
+              padding:0,
+              cursor: 'pointer'
+            }}
+          >
+            <FaTimes size={48} />
+          </button>
         </div>
       )}
     </div>
