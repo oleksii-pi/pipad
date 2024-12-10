@@ -15,11 +15,7 @@ interface StorageContextValue {
 const StorageContext = createContext<StorageContextValue | undefined>(undefined);
 
 const tryParseJSON = (jsonString: string) => {
-  try {
-    return JSON.parse(jsonString);
-  } catch (e) {
-    console.error('Error parsing JSON:', e);
-  }
+  try { return JSON.parse(jsonString); } catch (error) {}
   return jsonString;
 };
 
