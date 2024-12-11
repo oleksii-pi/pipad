@@ -56,6 +56,15 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
           Dark mode
         </label>
 
+        <label>
+          <input
+            type="checkbox"
+            checked={localDarkMode}
+            onChange={(e) => setLocalDarkMode(e.target.checked)}
+          />
+          Photo mode
+        </label>
+
         <div className="button-row">
           <button onClick={onClose}>Cancel</button>
           <button onClick={handleUpdate}>Update</button>
