@@ -98,6 +98,9 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (value === e.target.value) { 
+      return; 
+    }
     onChange(e.target.value);
     setShowPopup(true); // Show popup when user types
   };

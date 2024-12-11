@@ -96,7 +96,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     // Save prompt to localStorage
     const newPrompts = prompts.filter((p: string) => p !== prompt);
     newPrompts.unshift(prompt);
-    setStorage(StorageKey.Prompts, newPrompts)
+    setStorage(StorageKey.Prompts, newPrompts);
     
     const temperature = 1.0;
 
