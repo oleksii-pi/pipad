@@ -275,7 +275,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
               position: 'absolute',
               top: 16,
               right: 16,
-              background: 'red',
+              background: 'white',
               border: 'none',
               borderRadius: '50%',
               padding:0,
