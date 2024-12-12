@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import '../styles/github-markdown-light.css'
+import { IoMdRefresh } from "react-icons/io";
 
 interface BoxAnswerProps {
   answer: string;
@@ -45,6 +46,25 @@ export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStrea
           ref={textareaRef}
         />
       )}
+      <button
+            onClick={(e) => {
+              e.stopPropagation();
+              // refresh the page
+              window.location.reload();
+            }}
+            style={{
+              position: 'absolute',
+              bottom: 16,
+              right: "50%",
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '50%',
+              padding:0,
+              cursor: 'pointer'
+            }}
+          >
+            <IoMdRefresh size={32} />
+          </button>
     </div>
   );
 };
