@@ -56,7 +56,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
           Dark mode
         </label>
 
-w        <div className="button-row">
+        <div className="button-row">
           <button onClick={onClose}>Cancel</button>
           <button onClick={handleUpdate}>Update</button>
         </div>
