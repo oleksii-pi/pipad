@@ -5,15 +5,18 @@ import { useStorage } from '../StorageContext';
 
 export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { storage, setStorage } = useStorage();
-  const modelName = storage[StorageKey.ModelName] as string;
-  const darkMode = storage[StorageKey.DarkMode] as boolean;
+  const storedModelName = storage[StorageKey.ModelName] as string;
+  const storedSystemPrompt = storage[StorageKey.SystemPrompt] as string;
+  const storedDarkMode = storage[StorageKey.DarkMode] as boolean;
 
-  const [localModelName, setLocalModelName] = useState(modelName);
+  const [localModelName, setLocalModelName] = useState(storedModelName);
+  const [localSystemPrompt, setLocalSystemPrompt] = useState(storedSystemPrompt);
   const [localApiKey, setLocalApiKey] = useState('');
-  const [localDarkMode, setLocalDarkMode] = useState(darkMode);
+  const [localDarkMode, setLocalDarkMode] = useState(storedDarkMode);
 
   const handleUpdate = () => {
     setStorage(StorageKey.ModelName, localModelName);
+    setStorage(StorageKey.SystemPrompt, localSystemPrompt);
     if (localApiKey !== '') {
       setStorage(StorageKey.ApiKey, localApiKey);
     }
@@ -29,6 +32,13 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
           type="text"
           value={localModelName}
           onChange={(e) => setLocalModelName(e.target.value)}
+        />
+
+        <label>System prompt:</label>
+        <input
+          type="text"
+          value={localSystemPrompt}
+          onChange={(e) => setLocalSystemPrompt(e.target.value)}
         />
 
         <label>OpenAI Key:</label>

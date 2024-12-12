@@ -6,10 +6,19 @@ export async function streamAnswer(
   temperature: number,
   onPartialResponse: (text: string) => void,
   onError: (error: string) => void,
-  aiModel: string
+  aiModel: string,
+  systemPrompt: string
 ) {
   try {
-    let messages;
+    let messages = [];
+
+    if (systemPrompt && systemPrompt.trim() !== "") {
+      messages.push({
+        role: "system",
+        content: systemPrompt,
+      });
+    }
+
     if (imagesBase64Array && imagesBase64Array.length > 0) {
       const imageMessages = imagesBase64Array.map((imageContent) => ({
         type: "image_url",
@@ -18,20 +27,18 @@ export async function streamAnswer(
         },
       }));
 
-      messages = [
-        {
-          role: "user",
-          content: [
-            {
-              type: "text",
-              text: text,
-            },
-            ...imageMessages,
-          ],
-        },
-      ];
+      messages.push({
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: text,
+          },
+          ...imageMessages,
+        ],
+      });
     } else {
-      messages = [{ role: "user", content: text }];
+      messages.push({ role: "user", content: text });
     }
 
     const response = await fetch("https://api.openai.com/v1/chat/completions", {

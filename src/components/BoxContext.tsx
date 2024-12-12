@@ -26,7 +26,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   const aiModel = storage[StorageKey.ModelName] as string;
   const openaiSecretKey = storage[StorageKey.ApiKey] as string;
   const prompts = storage[StorageKey.Prompts] as string[];
-
+  const systemPrompt = storage[StorageKey.SystemPrompt] as string;
   
   const [images, setImages] = useState<string[]>([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -122,7 +122,8 @@ export const BoxContext: React.FC<BoxContextProps> = ({
         (error: string) => {
           console.error(error);
         },
-        aiModel
+        aiModel,
+        systemPrompt
       );
     } catch (e) {
       console.error(e);

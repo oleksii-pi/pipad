@@ -4,4 +4,5 @@ export enum StorageKey {
   ApiKey = "apiKey",
   DarkMode = "darkMode",
   Prompts = "prompts",
+  SystemPrompt = "systemPrompt",
 }
