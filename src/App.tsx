@@ -18,6 +18,8 @@ const App: React.FC = () => {
 
   const [prompt, setPrompt] = useState(storedPrompts.length > 0 ? storedPrompts[0] : '');
   const [answer, setAnswer] = useState('');
+  const [context, setContext] = useState('');
+  
   const [isStreaming, setIsStreaming] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(storedApiKey === '');
 
@@ -53,6 +55,8 @@ const App: React.FC = () => {
           >
             <div style={{width: "100%"}}>
               <BoxContext
+                context={context}
+                setContext={setContext}
                 prompt={prompt}
                 setAnswer={setAnswer}
                 isStreaming={isStreaming}
@@ -60,7 +64,11 @@ const App: React.FC = () => {
               />
             </div>
             <div style={{width: "100%"}}>
-              <BoxAnswer answer={answer} setAnswer={setAnswer} isStreaming={isStreaming} />
+              <BoxAnswer 
+                answer={answer} 
+                setAnswer={setAnswer} 
+                isStreaming={isStreaming}
+              />
             </div>
           </Split>
         </Split>

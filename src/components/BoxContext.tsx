@@ -6,6 +6,8 @@ import { StorageKey } from '../constants/StorageKey';
 import { useStorage } from '../StorageContext';
 
 interface BoxContextProps {
+  context: string;
+  setContext: React.Dispatch<React.SetStateAction<string>>;
   prompt: string;
   setAnswer: React.Dispatch<React.SetStateAction<string>>;
   isStreaming: boolean;
@@ -13,6 +15,8 @@ interface BoxContextProps {
 }
 
 export const BoxContext: React.FC<BoxContextProps> = ({
+  context,
+  setContext,
   prompt,
   setAnswer,
   isStreaming,
@@ -23,7 +27,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   const openaiSecretKey = storage[StorageKey.ApiKey] as string;
   const prompts = storage[StorageKey.Prompts] as string[];
 
-  const [context, setContext] = useState('');
+  
   const [images, setImages] = useState<string[]>([]);
   const [showCamera, setShowCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
