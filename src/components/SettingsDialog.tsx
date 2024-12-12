@@ -27,7 +27,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
   return (
     <div className="modal">
       <div className="modal-content">
-        <label>Model name:</label>
+        <label><span style={{ color: 'red' }}>* </span>Model name:</label>
         <input
           type="text"
           value={localModelName}
@@ -41,7 +41,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
           onChange={(e) => setLocalSystemPrompt(e.target.value)}
         />
 
-        <label>OpenAI Key:</label>
+        <label><span style={{ color: 'red' }}>* </span>OpenAI Key:</label>
         <input
           type="password"
           placeholder="****************"
