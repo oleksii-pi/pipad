@@ -8,11 +8,13 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
   const storedModelName = storage[StorageKey.ModelName] as string;
   const storedSystemPrompt = storage[StorageKey.SystemPrompt] as string;
   const storedDarkMode = storage[StorageKey.DarkMode] as boolean;
+  const textToSpeech = storage[StorageKey.TextToSpeech] as boolean;
 
   const [localModelName, setLocalModelName] = useState(storedModelName);
   const [localSystemPrompt, setLocalSystemPrompt] = useState(storedSystemPrompt);
   const [localApiKey, setLocalApiKey] = useState('');
   const [localDarkMode, setLocalDarkMode] = useState(storedDarkMode);
+  const [localTextToSpeech, setLocalTextToSpeech] = useState(textToSpeech);
 
   const handleUpdate = () => {
     setStorage(StorageKey.ModelName, localModelName);
@@ -21,6 +23,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
       setStorage(StorageKey.ApiKey, localApiKey);
     }
     setStorage(StorageKey.DarkMode, localDarkMode);
+    setStorage(StorageKey.TextToSpeech, localTextToSpeech);
     onClose();
   };
 
@@ -64,6 +67,15 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
             onChange={(e) => setLocalDarkMode(e.target.checked)}
           />
           Dark mode
+        </label>
+
+        <label>
+          <input
+            type="checkbox"
+            checked={localTextToSpeech}
+            onChange={(e) => setLocalTextToSpeech(e.target.checked)}
+          />
+          Text to speech
         </label>
 
         <div className="button-row">

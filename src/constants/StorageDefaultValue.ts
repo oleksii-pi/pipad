@@ -7,4 +7,5 @@ export const StorageDefaultValue: Record<StorageKey, any> = {
   [StorageKey.DarkMode]: false,
   [StorageKey.Prompts]: [],
   [StorageKey.SystemPrompt]: "",
+  [StorageKey.TextToSpeech]: false,
 };

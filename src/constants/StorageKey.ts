@@ -5,4 +5,5 @@ export enum StorageKey {
   DarkMode = "darkMode",
   Prompts = "prompts",
   SystemPrompt = "systemPrompt",
+  TextToSpeech = "textToSpeech",
 }

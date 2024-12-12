@@ -1,3 +1,4 @@
+// src/services/openaiApi.ts
 export async function streamAnswer(
   abortController: AbortController,
   openaiSecretKey: string,
@@ -7,7 +8,8 @@ export async function streamAnswer(
   onPartialResponse: (text: string) => void,
   onError: (error: string) => void,
   aiModel: string,
-  systemPrompt: string
+  systemPrompt: string,
+  textToSpeech: boolean
 ) {
   try {
     let messages = [];
@@ -76,7 +78,49 @@ export async function streamAnswer(
 
     const reader = response!.body!.getReader();
     const decoder = new TextDecoder();
+
+    const speakText = async function (text: string) {
+      if (!textToSpeech || !text.trim()) return;
+
+      try {
+        const ttsResponse = await fetch(
+          "https://api.openai.com/v1/audio/speech",
+          {
+            method: "POST",
+            headers: {
+              Authorization: "Bearer " + openaiSecretKey,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              model: "tts-1",
+              input: text,
+              voice: "alloy",
+            }),
+          }
+        );
+
+        if (!ttsResponse.ok) {
+          onError(`TTS failed: ${ttsResponse.statusText}`);
+          return;
+        }
+
+        const audioData = await ttsResponse.arrayBuffer();
+
+        const audioBlob = new Blob([audioData], { type: "audio/mpeg" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+
+        const audio = new Audio(audioUrl);
+        audio.play().catch((err) => {
+          onError("Audio playback failed: " + err.message);
+        });
+      } catch (err: any) {
+        onError("Text-to-speech error: " + err.message);
+      }
+    };
+
     let accumulated = "";
+    let fullText = "";
+
     while (true) {
       const { value, done } = await reader.read();
       if (done) {
@@ -97,6 +141,7 @@ export async function streamAnswer(
             const partialText = parsed.choices[0].delta.content;
             if (partialText) {
               onPartialResponse(partialText);
+              fullText += partialText;
             }
           } catch (error) {
             onError("Can not parse json: " + line);
@@ -105,6 +150,10 @@ export async function streamAnswer(
       }
 
       if (accumulated.includes("data: [DONE]")) break;
+    }
+
+    if (textToSpeech) {
+      speakText(fullText);
     }
   } catch (error: any) {
     if (error.name !== "AbortError") {

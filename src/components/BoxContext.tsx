@@ -27,6 +27,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   const openaiSecretKey = storage[StorageKey.ApiKey] as string;
   const prompts = storage[StorageKey.Prompts] as string[];
   const systemPrompt = storage[StorageKey.SystemPrompt] as string;
+  const textToSpeech = storage[StorageKey.TextToSpeech] as boolean;
   
   const [images, setImages] = useState<string[]>([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -123,7 +124,8 @@ export const BoxContext: React.FC<BoxContextProps> = ({
           console.error(error);
         },
         aiModel,
-        systemPrompt
+        systemPrompt,
+        textToSpeech
       );
     } catch (e) {
       console.error(e);
