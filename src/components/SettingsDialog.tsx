@@ -1,29 +1,31 @@
 // src/components/SettingsDialog.tsx
 import React, { useState } from 'react';
-import { StorageKey } from '../constants/StorageKey';
 import { useStorage } from '../StorageContext';
 
 export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { storage, setStorage } = useStorage();
-  const storedModelName = storage[StorageKey.ModelName] as string;
-  const storedSystemPrompt = storage[StorageKey.SystemPrompt] as string;
-  const storedDarkMode = storage[StorageKey.DarkMode] as boolean;
-  const textToSpeech = storage[StorageKey.TextToSpeech] as boolean;
+  const storedModelName = storage["modelName"];
+  const storedSystemPrompt = storage["systemPrompt"];
+  const storedDarkMode = storage["darkMode"];
+  const textToSpeech = storage["textToSpeech"];
+  const storedVoiceMode = storage["voiceMode"];
 
   const [localModelName, setLocalModelName] = useState(storedModelName);
   const [localSystemPrompt, setLocalSystemPrompt] = useState(storedSystemPrompt);
-  const [localApiKey, setLocalApiKey] = useState('');
+  const [localApiKey, setLocalApiKey] = useState<string>('');
   const [localDarkMode, setLocalDarkMode] = useState(storedDarkMode);
   const [localTextToSpeech, setLocalTextToSpeech] = useState(textToSpeech);
+  const [localVoiceMode, setLocalVoiceMode] = useState(storedVoiceMode);
 
   const handleUpdate = () => {
-    setStorage(StorageKey.ModelName, localModelName);
-    setStorage(StorageKey.SystemPrompt, localSystemPrompt);
+    setStorage("modelName", localModelName);
+    setStorage("systemPrompt", localSystemPrompt);
     if (localApiKey !== '') {
-      setStorage(StorageKey.ApiKey, localApiKey);
+      setStorage("apiKey", localApiKey);
     }
-    setStorage(StorageKey.DarkMode, localDarkMode);
-    setStorage(StorageKey.TextToSpeech, localTextToSpeech);
+    setStorage("darkMode", localDarkMode);
+    setStorage("textToSpeech", localTextToSpeech);
+    setStorage("voiceMode", localVoiceMode);
     onClose();
   };
 
@@ -78,6 +80,15 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
           Text to speech
         </label>
 
+        <label>
+          <input
+            type="checkbox"
+            checked={localVoiceMode}
+            onChange={(e) => setLocalVoiceMode(e.target.checked)}
+          />
+          Voice mode
+        </label>
+
         <div className="button-row">
           <button onClick={onClose}>Cancel</button>
           <button onClick={handleUpdate}>Update</button>
@@ -86,4 +97,3 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
     </div>
   );
 };
-

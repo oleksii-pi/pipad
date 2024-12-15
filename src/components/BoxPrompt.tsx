@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Autocomplete } from './Autocomplete';
 import { FaCog } from 'react-icons/fa';
 import { SettingsDialog } from './SettingsDialog';
-import { StorageKey } from '../constants/StorageKey';
 import { useStorage } from '../StorageContext';
 
 interface BoxPromptProps {
@@ -16,7 +15,7 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
   const [isSettingsDialogOpen, setIsSettingsDialogOpen] = useState(false);
   
   const { storage, setStorage } = useStorage();
-  const prompts = storage[StorageKey.Prompts] as string[];
+  const prompts = storage["prompts"];
 
   const handleSettingsClick = () => {
     setIsSettingsDialogOpen(true);
@@ -32,7 +31,7 @@ export const BoxPrompt: React.FC<BoxPromptProps> = ({ prompt, setPrompt, setAnsw
 
   const deleteItemFromMRU = (item: string) => {
     const newItems = prompts.filter((i: string) => i !== item);
-    setStorage(StorageKey.Prompts, newItems);
+    setStorage("prompts", newItems);
     return Promise.resolve();
   };
 

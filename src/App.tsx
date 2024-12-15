@@ -7,14 +7,13 @@ import { SettingsDialog } from './components/SettingsDialog';
 import './styles/globalStyles.css';
 import './styles/globalStyles.dark.css';
 import Split from 'react-split';
-import { StorageKey } from './constants/StorageKey';
 import { useStorage } from './StorageContext';
 
 const App: React.FC = () => {
   const { storage } = useStorage();
-  const storedPrompts = storage[StorageKey.Prompts] as string[];
-  const storedApiKey = storage[StorageKey.ApiKey];
-  const storedDarkMode = storage[StorageKey.DarkMode] as boolean;
+  const storedPrompts = storage["prompts"];
+  const storedApiKey = storage["apiKey"];
+  const storedDarkMode = storage["darkMode"];
 
   const [prompt, setPrompt] = useState(storedPrompts.length > 0 ? storedPrompts[0] : '');
   const [answer, setAnswer] = useState('');

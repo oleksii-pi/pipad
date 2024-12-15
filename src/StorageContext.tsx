@@ -1,37 +1,35 @@
 // src/StorageContext.tsx
 import React, { createContext, useState, useContext } from 'react';
-import { StorageKey } from './constants/StorageKey';
-import { StorageDefaultValue } from './constants/StorageDefaultValue';
+import { defaultStorageValues, StorageKey, StorageValues } from './constants/storageConfig';
 
-type StorageValues = {
-  [key in StorageKey]: any;
-};
-
-interface StorageContextValue {
+const StorageContext = createContext<{
   storage: StorageValues;
-  setStorage: <T>(key: StorageKey, value: T) => void;
-}
-
-const StorageContext = createContext<StorageContextValue | undefined>(undefined);
+  setStorage: <K extends StorageKey>(key: K, value: StorageValues[K]) => void;
+} | undefined>(undefined);
 
 const tryParseJSON = (jsonString: string) => {
-  try { return JSON.parse(jsonString); } catch (error) {}
-  return jsonString;
+  try { 
+    return JSON.parse(jsonString);
+  } catch {
+    return jsonString;
+  }
 };
 
 export const StorageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [storage, setStorageState] = useState<StorageValues>(() => {
-    const initialValues: Partial<StorageValues> = {};
-    for (const key of Object.values(StorageKey)) {
+    const initialValues = { ...defaultStorageValues };
+    for (const key in defaultStorageValues) {
       const item = localStorage.getItem(key);
-      initialValues[key as StorageKey] = item !== null 
-        ? tryParseJSON(item)
-        : StorageDefaultValue[key as StorageKey];
+      if (item !== null) {
+        const parsed = tryParseJSON(item);
+        // Type-casting here is safe because we trust defaultStorageValues shape
+        (initialValues as any)[key] = parsed;
+      }
     }
-    return initialValues as StorageValues;
+    return initialValues;
   });
 
-  const setStorage = <T,>(key: StorageKey, value: T) => {
+  const setStorage = <K extends StorageKey>(key: K, value: StorageValues[K]) => {
     localStorage.setItem(key, JSON.stringify(value));
     setStorageState(prev => ({
       ...prev,

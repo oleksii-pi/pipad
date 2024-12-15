@@ -2,7 +2,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { streamAnswer } from '../services/openaiApi';
 import { FaCamera, FaTimes } from 'react-icons/fa';
-import { StorageKey } from '../constants/StorageKey';
 import { useStorage } from '../StorageContext';
 
 interface BoxContextProps {
@@ -23,11 +22,11 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   setIsStreaming,
 }) => {
   const { storage, setStorage } = useStorage();
-  const aiModel = storage[StorageKey.ModelName] as string;
-  const openaiSecretKey = storage[StorageKey.ApiKey] as string;
-  const prompts = storage[StorageKey.Prompts] as string[];
-  const systemPrompt = storage[StorageKey.SystemPrompt] as string;
-  const textToSpeech = storage[StorageKey.TextToSpeech] as boolean;
+  const aiModel = storage["modelName"];
+  const openaiSecretKey = storage["apiKey"];
+  const prompts = storage["prompts"];
+  const systemPrompt = storage["systemPrompt"];
+  const textToSpeech = storage["textToSpeech"];
   
   const [images, setImages] = useState<string[]>([]);
   const [showCamera, setShowCamera] = useState(false);
@@ -101,7 +100,7 @@ export const BoxContext: React.FC<BoxContextProps> = ({
     // Save prompt to localStorage
     const newPrompts = prompts.filter((p: string) => p !== prompt);
     newPrompts.unshift(prompt);
-    setStorage(StorageKey.Prompts, newPrompts);
+    setStorage("prompts", newPrompts);
     
     const temperature = 1.0;
 
