@@ -4,16 +4,18 @@ import { BoxPrompt } from './components/BoxPrompt';
 import { BoxContext } from './components/BoxContext';
 import { BoxAnswer } from './components/BoxAnswer';
 import { SettingsDialog } from './components/SettingsDialog';
+import { VoiceMode } from './components/VoiceMode';
 import './styles/globalStyles.css';
 import './styles/globalStyles.dark.css';
 import Split from 'react-split';
 import { useStorage } from './StorageContext';
 
 const App: React.FC = () => {
-  const { storage } = useStorage();
+  const { storage, setStorage } = useStorage();
   const storedPrompts = storage["prompts"];
   const storedApiKey = storage["apiKey"];
   const storedDarkMode = storage["darkMode"];
+  const voiceMode = storage["voiceMode"];
 
   const [prompt, setPrompt] = useState(storedPrompts.length > 0 ? storedPrompts[0] : '');
   const [answer, setAnswer] = useState('');
@@ -63,11 +65,15 @@ const App: React.FC = () => {
               />
             </div>
             <div style={{width: "100%"}}>
-              <BoxAnswer 
-                answer={answer} 
-                setAnswer={setAnswer} 
-                isStreaming={isStreaming}
-              />
+              {voiceMode ? (
+                <VoiceMode onClose={() => {setStorage("voiceMode", false)}} />
+              ) : (
+                <BoxAnswer 
+                  answer={answer} 
+                  setAnswer={setAnswer} 
+                  isStreaming={isStreaming}
+                />
+              )}
             </div>
           </Split>
         </Split>
