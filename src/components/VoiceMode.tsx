@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaMicrophone, FaTimes } from 'react-icons/fa';
 import { useStorage } from '../StorageContext';
 import '../styles/globalStyles.css';
@@ -11,6 +11,7 @@ interface VoiceModeProps {
 export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
   const { storage } = useStorage();
   const storedDarkMode = storage["darkMode"];
+  const [isPressed, setIsPressed] = useState(false);
 
   const styles = {
     container: {
@@ -34,6 +35,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       cursor: 'pointer',
       padding: '5px',
       borderRadius: '10%',
+      opacity: 0.1,
       color: storedDarkMode ? '#fff' : '#000',
     },
     microphoneButton: {
@@ -42,8 +44,12 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       cursor: 'pointer',
       padding: '50px',
       borderRadius: '10%',
-      color: storedDarkMode ? '#fff' : '#000',
+      outline: 'none',
     },
+  };
+
+  const handleMicrophoneClick = () => {
+    setIsPressed(!isPressed);
   };
 
   return (
@@ -51,8 +57,8 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       <button style={styles.closeButton} onClick={onClose}>
         <FaTimes size={24} color={storedDarkMode ? 'red' : 'green'} />
       </button>
-      <button style={styles.microphoneButton}>
-        <FaMicrophone size={48} color={storedDarkMode ? 'red' : 'green'} />
+      <button style={styles.microphoneButton} onClick={handleMicrophoneClick}>
+        <FaMicrophone size={48} color={isPressed ? 'red' : 'gray'} />
       </button>
     </div>
   );
