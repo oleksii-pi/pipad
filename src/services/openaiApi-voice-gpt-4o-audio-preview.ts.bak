@@ -1,0 +1,148 @@
+// src/services/openaiApi-voice.ts
+export async function transcribeAudio(
+  openaiSecretKey: string,
+  audioBlob: Blob,
+  audioFormat: "wav" | "mp3" = "wav"
+): Promise<string> {
+  // 1. Convert Blob to ArrayBuffer
+  const arrayBuffer = await audioBlob.arrayBuffer();
+
+  // 2. Decode audio data to PCM using AudioContext
+  const AudioContextConstructor =
+    window.AudioContext || (window as any).webkitAudioContext;
+  if (!AudioContextConstructor) {
+    throw new Error("Web Audio API not supported in this environment.");
+  }
+  const audioContext = new AudioContextConstructor();
+  const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+  // 3. Encode PCM data from AudioBuffer into a WAV ArrayBuffer
+  const wavBuffer = encodeWAV(audioBuffer);
+
+  // 4. Convert WAV ArrayBuffer to base64
+  const base64Audio = arrayBufferToBase64(wavBuffer);
+
+  // 5. Prepare the request payload
+  const requestBody = {
+    model: "gpt-4o-audio-preview",
+    modalities: ["text", "audio"],
+    audio: {
+      voice: "alloy",
+      format: "wav",
+    },
+    messages: [
+      {
+        role: "user",
+        content: [
+          {
+            type: "text",
+            text: "Transcribe recording? Possible input languages: ukrainian, russian",
+          },
+          {
+            type: "input_audio",
+            input_audio: {
+              data: base64Audio,
+              format: "wav",
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  // 6. Call the OpenAI API
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + openaiSecretKey,
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const errorResponse = await response.json();
+    throw new Error(
+      "Audio transcription error: " +
+        (errorResponse.error?.message || response.statusText)
+    );
+  }
+
+  const json = await response.json();
+  const transcription =
+    json?.choices?.[0]?.message?.audio.transcript ||
+    "Transcription not extracted from recording";
+  return transcription.trim();
+}
+
+// Helper functions
+
+function encodeWAV(audioBuffer: AudioBuffer): ArrayBuffer {
+  const numChannels = audioBuffer.numberOfChannels;
+  const sampleRate = audioBuffer.sampleRate;
+  const format = 1; // PCM
+  const bitsPerSample = 16;
+
+  // Interleave channels if more than one channel
+  let interleaved: Float32Array;
+  if (numChannels === 1) {
+    interleaved = audioBuffer.getChannelData(0);
+  } else {
+    const length = audioBuffer.length * numChannels;
+    interleaved = new Float32Array(length);
+    for (let i = 0; i < audioBuffer.length; i++) {
+      for (let c = 0; c < numChannels; c++) {
+        interleaved[i * numChannels + c] = audioBuffer.getChannelData(c)[i];
+      }
+    }
+  }
+
+  const blockAlign = (numChannels * bitsPerSample) / 8;
+  const byteRate = sampleRate * blockAlign;
+  const dataSize = interleaved.length * 2; // 16-bit samples
+  const buffer = new ArrayBuffer(44 + dataSize);
+  const view = new DataView(buffer);
+
+  // RIFF header
+  writeString(view, 0, "RIFF");
+  view.setUint32(4, 36 + dataSize, true);
+  writeString(view, 8, "WAVE");
+
+  // fmt subchunk
+  writeString(view, 12, "fmt ");
+  view.setUint32(16, 16, true); // Subchunk1Size
+  view.setUint16(20, format, true); // PCM
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, byteRate, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitsPerSample, true);
+
+  // data subchunk
+  writeString(view, 36, "data");
+  view.setUint32(40, dataSize, true);
+
+  // Write the PCM samples
+  let offset = 44;
+  for (let i = 0; i < interleaved.length; i++, offset += 2) {
+    const sample = Math.max(-1, Math.min(1, interleaved[i]));
+    view.setInt16(offset, sample < 0 ? sample * 0x8000 : sample * 0x7fff, true);
+  }
+
+  return buffer;
+}
+
+function writeString(view: DataView, offset: number, str: string) {
+  for (let i = 0; i < str.length; i++) {
+    view.setUint8(offset + i, str.charCodeAt(i));
+  }
+}
+
+function arrayBufferToBase64(buffer: ArrayBuffer): string {
+  const bytes = new Uint8Array(buffer);
+  let binary = "";
+  for (let i = 0; i < bytes.byteLength; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
