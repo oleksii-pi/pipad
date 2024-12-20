@@ -86,7 +86,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
                 [],
                 0.7,
                 (partial: string) => {
-                  console.log("Partial response:", partial);
+                  //console.log("Partial response:", partial);
                 },
                 (error: string) => {
                   console.error("Error in streamAnswer:", error);
