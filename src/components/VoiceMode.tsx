@@ -1,5 +1,4 @@
 // src/components/VoiceMode.tsx
-
 import React, { useState, useRef } from 'react';
 import { FaMicrophone, FaTimes } from 'react-icons/fa';
 import { useStorage } from '../StorageContext';
@@ -16,6 +15,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
   const { storage } = useStorage();
   const openAISecretKey = storage["apiKey"];
   const systemPrompt = storage["systemPrompt"];
+  const modelName = storage["modelName"];
   const storedDarkMode = storage["darkMode"];
 
   const [isRecording, setIsRecording] = useState(false);
@@ -23,6 +23,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
+  const mediaStreamRef = useRef<MediaStream | null>(null); 
 
   const styles = {
     container: {
@@ -75,10 +76,17 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
   };
 
   const handleMicrophoneClick = async () => {
+    if (!openAISecretKey) {
+      addLog("No OpenAI API Key found in storage.");
+      return;
+    }
+
     if (!isRecording) {
       // Start recording
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaStreamRef.current = stream; 
+
         const mediaRecorder = new MediaRecorder(stream);
         mediaRecorderRef.current = mediaRecorder;
         audioChunksRef.current = [];
@@ -91,37 +99,32 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
 
         mediaRecorder.addEventListener('stop', async () => {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'webm' });
-          if (openAISecretKey) {
-            try {
-              const transcription = await transcribeAudio(openAISecretKey, audioBlob);
-              addLog(`Transcription: ${transcription}`);
+          try {
+            const transcription = await transcribeAudio(openAISecretKey, audioBlob);
+            addLog(`Transcription: ${transcription}`);
 
-              // Now call streamAnswer with the transcription and system prompt
-              const abortController = new AbortController();
-              let answer = "";
-              await streamAnswer(
-                abortController,
-                openAISecretKey,
-                transcription,
-                [],
-                0.7,
-                (partial: string) => {
-                  answer += partial;
-                },
-                (error: string) => {
-                  addLog(`Error in streamAnswer: ${error}`);
-                },
-                "gpt-3.5-turbo",
-                systemPrompt || "",
-                true
-              );
-              addLog(`Answer: ${answer}`);
-            } catch (err) {
-              const errorMessage = `Error transcribing audio or streaming answer: ${err}`;
-              addLog(errorMessage);
-            }
-          } else {
-            addLog("No OpenAI API Key found in storage.");
+            const abortController = new AbortController();
+            let answer = "";
+            await streamAnswer(
+              abortController,
+              openAISecretKey,
+              transcription,
+              [],
+              1,
+              (partial: string) => {
+                answer += partial;
+              },
+              (error: string) => {
+                addLog(`Error in streamAnswer: ${error}`);
+              },
+              modelName,
+              systemPrompt || "",
+              true
+            );
+            addLog(`AI: ${answer}`);
+          } catch (err) {
+            const errorMessage = `Error transcribing audio or streaming answer: ${err}`;
+            addLog(errorMessage);
           }
         });
 
@@ -136,6 +139,10 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
         mediaRecorderRef.current.stop();
       }
+      if (mediaStreamRef.current) {
+        mediaStreamRef.current.getTracks().forEach(track => track.stop());
+        mediaStreamRef.current = null;
+      }
       setIsRecording(false);
     }
   };
@@ -146,7 +153,6 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
         <FaTimes size={24} color={storedDarkMode ? 'red' : 'green'} />
       </button>
 
-      {/* Text box for logging events */}
       <textarea
         style={styles.logTextArea}
         readOnly
