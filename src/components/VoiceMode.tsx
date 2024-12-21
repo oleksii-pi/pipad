@@ -87,6 +87,8 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
           audioChunksRef.current.push(event.data);
         });
 
+        //! store all messages and provide them to the api for better context
+
         mediaRecorder.addEventListener('stop', async () => {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           if (openAISecretKey) {
