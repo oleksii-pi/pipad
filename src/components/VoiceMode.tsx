@@ -1,11 +1,12 @@
 // src/components/VoiceMode.tsx
+
 import React, { useState, useRef } from 'react';
 import { FaMicrophone, FaTimes } from 'react-icons/fa';
 import { useStorage } from '../StorageContext';
 import '../styles/globalStyles.css';
 import '../styles/globalStyles.dark.css';
 import { streamAnswer } from '../services/openaiApi';
-import { transcribeAudio,  } from '../services/openaiApi-voice';
+import { transcribeAudio } from '../services/openaiApi-voice';
 
 interface VoiceModeProps {
   onClose: () => void;
@@ -16,7 +17,10 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
   const openAISecretKey = storage["apiKey"];
   const systemPrompt = storage["systemPrompt"];
   const storedDarkMode = storage["darkMode"];
+
   const [isRecording, setIsRecording] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<BlobPart[]>([]);
 
@@ -28,6 +32,7 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       width: '100%',
       height: '100%',
       display: 'flex',
+      flexDirection: 'column' as 'column',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: storedDarkMode ? '#333' : '#fff',
@@ -45,6 +50,16 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       opacity: 0.1,
       color: storedDarkMode ? '#fff' : '#000',
     },
+    logTextArea: {
+      width: '90%',
+      height: '150px',
+      marginBottom: '20px',
+      backgroundColor: storedDarkMode ? '#555' : '#eee',
+      color: storedDarkMode ? '#fff' : '#000',
+      padding: '10px',
+      borderRadius: '4px',
+      resize: 'none' as 'none',
+    },
     microphoneButton: {
       background: '#ccc',
       border: 'none',
@@ -53,6 +68,10 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       borderRadius: '10%',
       outline: 'none',
     },
+  };
+
+  const addLog = (message: string) => {
+    setLogs((prevLogs) => [...prevLogs, message]);
   };
 
   const handleMicrophoneClick = async () => {
@@ -72,13 +91,12 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
           const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
           if (openAISecretKey) {
             try {
-              // Transcribe the recorded audio
               const transcription = await transcribeAudio(openAISecretKey, audioBlob);
-
-              console.log("Transcription:", transcription);
+              addLog(`Transcription: ${transcription}`);
 
               // Now call streamAnswer with the transcription and system prompt
               const abortController = new AbortController();
+              let answer = "";
               await streamAnswer(
                 abortController,
                 openAISecretKey,
@@ -86,27 +104,30 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
                 [],
                 0.7,
                 (partial: string) => {
-                  //console.log("Partial response:", partial);
+                  answer += partial;
                 },
                 (error: string) => {
-                  console.error("Error in streamAnswer:", error);
+                  addLog(`Error in streamAnswer: ${error}`);
                 },
                 "gpt-3.5-turbo",
                 systemPrompt || "",
                 true
               );
+              addLog(`Answer: ${answer}`);
             } catch (err) {
-              console.error("Error transcribing audio or streaming answer:", err);
+              const errorMessage = `Error transcribing audio or streaming answer: ${err}`;
+              addLog(errorMessage);
             }
           } else {
-            console.error("No OpenAI API Key found in storage.");
+            addLog("No OpenAI API Key found in storage.");
           }
         });
 
         mediaRecorder.start();
         setIsRecording(true);
       } catch (err) {
-        console.error("Error accessing microphone:", err);
+        const errorMessage = `Error accessing microphone: ${err}`;
+        addLog(errorMessage);
       }
     } else {
       // Stop recording
@@ -122,6 +143,14 @@ export const VoiceMode: React.FC<VoiceModeProps> = ({ onClose }) => {
       <button style={styles.closeButton} onClick={onClose}>
         <FaTimes size={24} color={storedDarkMode ? 'red' : 'green'} />
       </button>
+
+      {/* Text box for logging events */}
+      <textarea
+        style={styles.logTextArea}
+        readOnly
+        value={logs.join('\n')}
+      />
+
       <button style={styles.microphoneButton} onClick={handleMicrophoneClick}>
         <FaMicrophone size={48} color={isRecording ? 'red' : 'gray'} />
       </button>
