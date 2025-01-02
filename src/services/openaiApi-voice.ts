@@ -7,7 +7,7 @@ export async function transcribeAudio(
   formData.append("file", audioBlob, "audio.webm");
   formData.append("model", "whisper-1");
   //formData.append("prompt", "");
-  formData.append("language", "uk");
+  formData.append("language", "en");
 
   const response = await fetch(
     "https://api.openai.com/v1/audio/transcriptions",
