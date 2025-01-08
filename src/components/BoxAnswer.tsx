@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
 import '../styles/github-markdown-light.css'
+import '../styles/github-markdown-dark.css'
 import { IoMdRefresh } from "react-icons/io";
 
 interface BoxAnswerProps {
