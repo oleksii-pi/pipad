@@ -73,7 +73,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         zIndex: 1000,
       });
     }
-  }, [showPopup]);
+  }, [showPopup, storedDarkMode]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (showPopup) {
