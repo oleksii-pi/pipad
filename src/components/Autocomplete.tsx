@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef, ReactElement } from 'react';
 import { createPortal } from 'react-dom';
 import { FaHistory } from 'react-icons/fa';
+import { useStorage } from '../StorageContext';
 
 interface AutocompleteProps {
   value: string;
@@ -26,6 +27,8 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const popupRef = useRef<HTMLUListElement | null>(null);
+  const { storage } = useStorage();
+  const storedDarkMode = storage["darkMode"];
 
   useEffect(() => {
     // Load MRU items on mount
@@ -59,8 +62,9 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
         top: rect.bottom + window.scrollY + 4,
         left: rect.left + window.scrollX,
         width: rect.width,
-        backgroundColor: 'white',
-        border: '1px solid #ccc',
+        backgroundColor: storedDarkMode ? '#333' : 'white',
+        color: storedDarkMode ? 'white' : 'black',
+        border: '1px solid ' + (storedDarkMode ? 'transaprent' : '#ccc'),
         maxHeight: '400px',
         overflowY: 'auto',
         listStyleType: 'none',
@@ -133,7 +137,11 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     onKeyDown: handleKeyDown,
   });
 
+  const popupItemBackgroundColor = storedDarkMode ? '#333' : 'white';
+  const popuptItemBackgroundHoverColor = storedDarkMode ? '#444' : '#bde4ff';
+
   const popup = showPopup && filteredItems.length > 0 && (
+    
     <ul
       ref={popupRef}
       style={popupStyle}
@@ -150,7 +158,7 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
           onMouseEnter={() => setSelectedIndex(index)}
           style={{
             padding: '5px 10px',
-            backgroundColor: index === selectedIndex ? '#bde4ff' : 'white',
+            backgroundColor: index === selectedIndex ? popuptItemBackgroundHoverColor : popupItemBackgroundColor,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
