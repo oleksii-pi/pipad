@@ -39,7 +39,7 @@ const App: React.FC = () => {
         <Split
           style={{width: "100%", height: "100%"}}
           sizes={[7, 93]}       // Initial sizes of the panes in percentages
-          minSize={50}          // Minimum size of each pane in pixels
+          minSize={60}          // Minimum size of each pane in pixels
           gutterSize={4}        // Size of the gutter in pixels
           direction="vertical"  // Direction of the splitter
           cursor="row-resize"   // Cursor to display when hovering over the gutter
