@@ -20,10 +20,11 @@ export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStrea
     if (!isStreaming && !isMarkdown) {
       // Streaming is completed, focus and select all text in the textarea
       if (textareaRef.current && textareaRef.current.value !== '') {
+        const prevScrollTop = textareaRef.current.scrollTop;
         textareaRef.current.focus();
         textareaRef.current.select();
-        // Preserve scroll at the top
-        textareaRef.current.scrollTop = 0;
+        // Restore previous scroll position
+        textareaRef.current.scrollTop = prevScrollTop;
       }
     }
   }, [isStreaming, isMarkdown]);
