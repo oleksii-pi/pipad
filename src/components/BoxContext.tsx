@@ -97,6 +97,18 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   ): Promise<void> {
     event.preventDefault();
 
+    // Remove userMessage param from URL after submit
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      if (params.has('userMessage')) {
+        params.delete('userMessage');
+        const newUrl =
+          window.location.pathname +
+          (params.toString() ? `?${params.toString()}` : '');
+        window.history.replaceState({}, '', newUrl);
+      }
+    }
+
     if (!openaiSecretKey) {
       console.error('OpenAI secret key is missing');
       setIsStreaming(false);
