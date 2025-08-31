@@ -34,7 +34,15 @@ export const BoxContext: React.FC<BoxContextProps> = ({
   const streamRef = useRef<MediaStream | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const submitButtonRef = useRef<HTMLButtonElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Helper to check if userMessage is present in URL
+  function hasUserMessageParam() {
+    if (typeof window === 'undefined') return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.has('userMessage');
+  }
 
   useEffect(() => {
     const focusTextarea = () => {
@@ -43,19 +51,28 @@ export const BoxContext: React.FC<BoxContextProps> = ({
         textareaRef.current.select();
       }
     };
-
-    // Focus on initial mount
-    focusTextarea();
-
-    // Focus on visibility change
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        focusTextarea();
+    const focusSubmitButton = () => {
+      if (submitButtonRef.current) {
+        submitButtonRef.current.focus();
       }
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    if (hasUserMessageParam()) {
+      focusSubmitButton();
+    } else {
+      focusTextarea();
+    }
 
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        if (hasUserMessageParam()) {
+          focusSubmitButton();
+        } else {
+          focusTextarea();
+        }
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
@@ -223,7 +240,12 @@ export const BoxContext: React.FC<BoxContextProps> = ({
           <FaCamera size={24} />
         </button>
       </div>
-      <button id="submitButton" onClick={handleSubmit} style={{ position: 'absolute', bottom: 4, right: 4 }}>
+      <button
+        id="submitButton"
+        onClick={handleSubmit}
+        style={{ position: 'absolute', bottom: 4, right: 4 }}
+        ref={submitButtonRef}
+      >
         {isStreaming ? 'Cancel' : 'Submit'}
       </button>
 

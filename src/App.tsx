@@ -10,6 +10,11 @@ import './styles/globalStyles.dark.css';
 import Split from 'react-split';
 import { useStorage } from './StorageContext';
 
+const getQueryParam = (param: string): string | null => {
+  const params = new URLSearchParams(window.location.search);
+  return params.get(param);
+};
+
 const App: React.FC = () => {
   const { storage, setStorage } = useStorage();
   const storedPrompts = storage["prompts"];
@@ -17,10 +22,17 @@ const App: React.FC = () => {
   const storedDarkMode = storage["darkMode"];
   const voiceMode = storage["voiceMode"];
 
-  const [prompt, setPrompt] = useState(storedPrompts.length > 0 ? storedPrompts[0] : '');
+  // --- new logic for query param ---
+  const userMessage = getQueryParam('userMessage');
+  const [prompt, setPrompt] = useState(
+    userMessage !== null ? '' : (storedPrompts.length > 0 ? storedPrompts[0] : '')
+  );
+  const [context, setContext] = useState(
+    userMessage !== null ? userMessage : ''
+  );
+  // --- end new logic ---
+
   const [answer, setAnswer] = useState('');
-  const [context, setContext] = useState('');
-  
   const [isStreaming, setIsStreaming] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(storedApiKey === '');
 
