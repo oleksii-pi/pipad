@@ -77,7 +77,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
             checked={localTextToSpeech}
             onChange={(e) => setLocalTextToSpeech(e.target.checked)}
           />
-          Text to speech
+          (Experimental) Text to speech
         </label>
 
         <label>
@@ -86,7 +86,7 @@ export const SettingsDialog: React.FC<{ onClose: () => void }> = ({ onClose }) =
             checked={localVoiceMode}
             onChange={(e) => setLocalVoiceMode(e.target.checked)}
           />
-          Voice mode
+          (Experimental) Voice mode
         </label>
 
         <div className="button-row">
