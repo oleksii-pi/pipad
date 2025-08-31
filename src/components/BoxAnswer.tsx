@@ -22,6 +22,8 @@ export const BoxAnswer: React.FC<BoxAnswerProps> = ({ answer, setAnswer, isStrea
       if (textareaRef.current && textareaRef.current.value !== '') {
         textareaRef.current.focus();
         textareaRef.current.select();
+        // Preserve scroll at the top
+        textareaRef.current.scrollTop = 0;
       }
     }
   }, [isStreaming, isMarkdown]);
